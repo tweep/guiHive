@@ -159,6 +159,20 @@ use Bio::EnsEMBL::Hive::DBSQL::BaseAdaptor;
   return;
 };
 
+# A work-around solution to get the process_id of the HPC job - this allows you 
+# to debug without tracing lost / failed jobs down in the db  
+
+*Bio::EnsEMBL::Hive::DBSQL::AnalysisJobAdaptor::get_process_id = sub {
+  my ($self, $job) = @_;
+
+   my $hive_dbc = $self->db->hive_pipeline->hive_dba->dbc;
+   my $sql = "SELECT role_id,process_id  from role left join worker using(worker_id) WHERE role_id =" . $job->role_id();
+
+   my $result_href =  $hive_dbc->selectrow_hashref($sql);
+
+   return $result_href->{process_id};
+};
+
 ## AnalysisJobAdaptor doesn't have a generic update method
 ## and it doesn't inherit from Hive::DBSQL::BaseAdaptor either
 ## I guess that this will change in the future,

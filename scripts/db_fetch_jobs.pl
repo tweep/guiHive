@@ -96,8 +96,8 @@ sub formJobsInfo {
 			     'id'    => $unique_job_label
 			   },
 		    "1" => $job->analysis_id(),
-		    "2" => $template->output(),
-		    "3" => $job->worker_id,
+		    "2" => $template->output(), 
+            "3" => $dbConn->get_AnalysisJobAdaptor()->get_process_id($job),
 		    "4" => { 'value'     => $job->status(),
 			     'job_label' => $unique_job_label,
 			     'adaptor'   => $adaptor,
